@@ -3,6 +3,7 @@ package com.cowman.turlough.androidcharts;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
@@ -13,29 +14,30 @@ public class StatsView extends SurfaceView {
     private SurfaceHolder surfaceHolder;
     private Plotter plotter;
     private IStats stats;
+    Context context;
 
     public StatsView(Context context) {
         super(context);
 
-        init();
+        init(context);
 
     }
 
     public StatsView(Context context,
                          AttributeSet attrs) {
         super(context, attrs);
-        init();
+        init(context);
     }
 
     public StatsView(Context context,
                          AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
-        init();
+        init(context);
     }
 
-    private void init() {
+    private void init(Context context) {
         surfaceHolder = getHolder();
-
+        this.context = context;
         stats = new SimpleStats(new ArrayList<Double>());
         plotter = new Plotter(stats);
 
@@ -70,7 +72,7 @@ public class StatsView extends SurfaceView {
         Canvas canvas = surfaceHolder.lockCanvas(null);
         plotter.refresh(canvas);
         surfaceHolder.unlockCanvasAndPost(canvas);
-
+        //Log.i(getClass().getName(),"Canvas refreshed");
 
     }
 }

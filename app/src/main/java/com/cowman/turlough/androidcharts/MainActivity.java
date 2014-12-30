@@ -22,9 +22,6 @@ public class MainActivity extends ActionBarActivity implements StatsFragment.OnF
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-
-
-
         if (savedInstanceState == null) {
 
             fragment =StatsFragment.newInstance();
@@ -43,7 +40,7 @@ public class MainActivity extends ActionBarActivity implements StatsFragment.OnF
             public void onClick(View view) {
                 final int numTests = 300;
                 TestTask [] tasks = new TestTask[numTests];
-                MultiTestTask runner = new MultiTestTask();
+                MultiTestTask runner = new MultiTestTask(MainActivity.this);
                 for (int i = 0; i < numTests; i++) {
                     tasks [i] = new TestTask(runner, stats, fragment);
                 }

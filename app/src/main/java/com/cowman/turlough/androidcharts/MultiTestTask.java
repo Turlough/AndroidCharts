@@ -1,6 +1,8 @@
 package com.cowman.turlough.androidcharts;
 
+import android.app.Activity;
 import android.os.AsyncTask;
+import android.util.Log;
 import android.widget.Toast;
 
 /**
@@ -9,6 +11,11 @@ import android.widget.Toast;
 public class MultiTestTask extends AsyncTask<TestTask, IPlotter, Void> {
 
     DataGenerator generator = new DataGenerator(174, 33);
+    Activity parent;
+
+    public MultiTestTask(Activity parent) {
+        this.parent = parent;
+    }
 
     @Override
     protected Void doInBackground(TestTask... testTasks) {
@@ -23,15 +30,23 @@ public class MultiTestTask extends AsyncTask<TestTask, IPlotter, Void> {
     }
 
     public void subTaskCompleted(IPlotter plotter){
-        //sleep(100);
+        //Log.i(getClass().getName(), "SubTaskCompleted");
         publishProgress(plotter);
     }
 
     @Override
     protected void onProgressUpdate(IPlotter... values) {
+
         super.onProgressUpdate(values[0]);
-        IPlotter p = values[0];
-        p.refresh();
+        final IPlotter plotter = values[0];
+
+        parent.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                plotter.refresh();
+            }
+        });
+
 
     }
 
