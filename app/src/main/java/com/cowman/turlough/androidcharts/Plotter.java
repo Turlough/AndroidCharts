@@ -10,11 +10,10 @@ import java.util.List;
 /**
  * Created by turlough on 30/12/14.
  */
-public class Plotter {
+public class Plotter{
 
     private List<Double>  values;
     private int yScale = 50;
-    int padding =5;
     Paint dataPaint;
     Paint linesPaint;
     Paint statsPaint;
@@ -23,9 +22,12 @@ public class Plotter {
     int bottomOffset = 50;
     int topOffset = 50;
     int rightOffset = 50;
+    IStats stats;
 
 
-    public Plotter(){
+    public Plotter(IStats stats){
+
+        this.stats = stats;
         values = new ArrayList<Double>();
 
         dataPaint = new Paint();
@@ -49,25 +51,31 @@ public class Plotter {
 
     }
 
-    public void plotData(Canvas c){
+    public void refresh(Canvas canvas){
 
         if(values.size() < 1) return;
 
+        yScale = (canvas.getHeight() - topOffset - bottomOffset)/(maxValue);
+
+        clear(canvas);
+        drawStats(canvas, stats.getMean(), stats.getStandardDeviation());
+        drawGrid(canvas);
 
         for (int i = 0; i < values.size(); i++) {
-            drawBar(i, c);
+            plot(canvas, i);
         }
+
     }
 
-    private void drawBar(int i,  Canvas c){
+    private void plot(Canvas canvas, int index){
 
-        int w = (c.getWidth() - leftOffset - rightOffset) / (values.size());
-        int base = c.getHeight() - bottomOffset;
-        double top = base - (values.get(i) * yScale);
+        int w = (canvas.getWidth() - leftOffset - rightOffset) / (values.size());
+        int base = canvas.getHeight() - bottomOffset;
+        double top = base - (values.get(index) * yScale);
 
 
-        c.drawCircle(
-                leftOffset + (i * w ),
+        canvas.drawCircle(
+                leftOffset + (index * w),
                 (int) top,
                 2,
                 dataPaint
@@ -75,115 +83,100 @@ public class Plotter {
 
     }
 
-    public void clear(Canvas c){
+    private void clear(Canvas canvas){
 
-        c.drawColor(Color.BLACK);
+        canvas.drawColor(Color.BLACK);
     }
 
-    public void add(double data, Canvas c){
+    public synchronized void add(double data){
 
         values.add(data);
+        stats.add(data);
         maxValue = Math.max((int)Math.round(data) + 1, maxValue);
-        yScale = (c.getHeight() - topOffset - bottomOffset)/(maxValue);
 
-        clear(c);
-        drawStats(c);
-        drawLines(c);
-        plotData(c);
+
     }
 
-    public void drawLines(Canvas c){
+    public void drawGrid(Canvas canvas){
 
-        int base = c.getHeight() - bottomOffset;
+        int base = canvas.getHeight() - bottomOffset;
         int step = Math.max(1, maxValue / 10 );
 
         for (int i = 0; i <= maxValue ; i += step) {
 
             int top = base - (i * yScale);
 
-            c.drawText(
+            canvas.drawText(
                     Integer.toString(i),
-                    (float)(leftOffset - 50),
-                    (float)(top),
+                    (float) (leftOffset - 50),
+                    (float) (top),
                     linesPaint
             );
 
-            c.drawLine(
+            canvas.drawLine(
                     leftOffset, //startx
                     top,//starty
-                    c.getWidth() - rightOffset, //stopx
+                    canvas.getWidth() - rightOffset, //stopx
                     top, //stopy
                     linesPaint
             );
         }
     }
 
-    public void drawStats(Canvas c){
+    public void drawStats(Canvas canvas, double mean, double deviation){
 
-
-        SimpleStats stats = new SimpleStats(values);
-        double mean = stats.getMean();
-        int sd = (int)Math.round(stats.getStandardDeviation());
-        int base = c.getHeight() - bottomOffset;
-        int top = base - ((int)Math.round(mean) * yScale);
+        int base = canvas.getHeight() - bottomOffset;
+        int centre = base - ((int)Math.round(mean) * yScale);
+        int sd = (int)Math.round(deviation);
 
         statsPaint.setAlpha(255);
 
-        c.drawText(
+        canvas.drawText(
                 "Mean " + (int) Math.round(mean),
                 (float) (leftOffset - 130),
-                (float) (top),
+                (float) (centre),
                 statsPaint
         );
 
-        c.drawText(
+        canvas.drawText(
                 "SD " + sd,
-                (float)(leftOffset - 130),
-                (float)(top + sd),
+                (float) (leftOffset - 130),
+                (float) (centre + sd),
                 statsPaint
         );
 
-        c.drawText(
+        canvas.drawText(
                 "Num Samples " + values.size(),
-                (float)(leftOffset - 130),
-                (float)(c.getHeight() - 20),
+                (float) (leftOffset - 130),
+                (float) (canvas.getHeight() - 20),
                 statsPaint
         );
-
-        c.drawLine(
+        //mean line
+        canvas.drawLine(
                 leftOffset, //startx
-                top,//starty
-                c.getWidth() - rightOffset, //stopx
-                top, //stopy
+                centre,//starty
+                canvas.getWidth() - rightOffset, //stopx
+                centre, //stopy
                 statsPaint
         );
 
+        //stats rectangles
         statsPaint.setAlpha(30);
 
-        c.drawRect(
+        drawSdRectangle(canvas, centre, sd, 1);
+        drawSdRectangle(canvas, centre, sd, 2);
+        drawSdRectangle(canvas, centre, sd, 3);
+
+    }
+
+    private void drawSdRectangle(Canvas canvas, int mean, int sd, float tolerance) {
+        canvas.drawRect(
                 leftOffset,//left
-                top + sd ,//top
-                c.getWidth() - rightOffset,//right
-                top - sd,//bottom
+                mean + sd * tolerance,//top
+                canvas.getWidth() - rightOffset,//right
+                mean - sd * 3,//bottom
                 statsPaint
         );
-
-        c.drawRect(
-                leftOffset,//left
-                top + sd * 2,//top
-                c.getWidth() - rightOffset,//right
-                top - sd * 2,//bottom
-                statsPaint
-        );
-
-        c.drawRect(
-                leftOffset,//left
-                top + sd * 3,//top
-                c.getWidth() - rightOffset,//right
-                top - sd * 3,//bottom
-                statsPaint
-        );
-
     }
 
 }

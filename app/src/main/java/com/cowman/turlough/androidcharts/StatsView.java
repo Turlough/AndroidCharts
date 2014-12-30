@@ -6,13 +6,17 @@ import android.util.AttributeSet;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
+import java.util.ArrayList;
+
 public class StatsView extends SurfaceView {
 
     private SurfaceHolder surfaceHolder;
-    private Plotter plotter = new Plotter();;
+    private Plotter plotter;
+    private IStats stats;
 
     public StatsView(Context context) {
         super(context);
+
         init();
 
     }
@@ -31,13 +35,16 @@ public class StatsView extends SurfaceView {
 
     private void init() {
         surfaceHolder = getHolder();
+
+        stats = new SimpleStats(new ArrayList<Double>());
+        plotter = new Plotter(stats);
+
         surfaceHolder.addCallback(new SurfaceHolder.Callback() {
 
             @Override
             public void surfaceCreated(SurfaceHolder holder) {
-                Canvas canvas = holder.lockCanvas(null);
-                update(canvas);
-                holder.unlockCanvasAndPost(canvas);
+                surfaceHolder = holder;
+                refresh();
             }
 
             @Override
@@ -56,12 +63,14 @@ public class StatsView extends SurfaceView {
     }
 
     public synchronized void add(double data){
-        Canvas canvas = surfaceHolder.lockCanvas(null);
-        plotter.add(data, canvas);
-        surfaceHolder.unlockCanvasAndPost(canvas);
+        plotter.add(data);
 
     }
-    protected synchronized void update(Canvas canvas) {
-        plotter.plotData(canvas);
+    protected synchronized void refresh() {
+        Canvas canvas = surfaceHolder.lockCanvas(null);
+        plotter.refresh(canvas);
+        surfaceHolder.unlockCanvasAndPost(canvas);
+
+
     }
 }

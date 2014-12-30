@@ -6,7 +6,7 @@ import android.support.v7.app.ActionBarActivity;
 import android.view.View;
 import android.widget.Button;
 
-import java.util.Random;
+import java.util.ArrayList;
 
 
 public class MainActivity extends ActionBarActivity implements StatsFragment.OnFragmentInteractionListener {
@@ -14,11 +14,16 @@ public class MainActivity extends ActionBarActivity implements StatsFragment.OnF
     StatsFragment fragment;
     Button btnStart;
     DataGenerator generator = new DataGenerator(200, 30);
+    TestTask test;
+    IStats stats;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+
+
 
         if (savedInstanceState == null) {
 
@@ -29,19 +34,20 @@ public class MainActivity extends ActionBarActivity implements StatsFragment.OnF
 
         }
 
+        stats = new SimpleStats(new ArrayList<Double>());
+
+
         btnStart = (Button) findViewById(R.id.btnStart);
         btnStart.setOnClickListener( new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                for (int i = 0; i < 300; i++) {
-                    try {
-                        Thread.sleep(50);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                    double data = generator.nextGaussian();
-                    fragment.add(data);
+                final int numTests = 300;
+                TestTask [] tasks = new TestTask[numTests];
+                MultiTestTask runner = new MultiTestTask();
+                for (int i = 0; i < numTests; i++) {
+                    tasks [i] = new TestTask(runner, stats, fragment);
                 }
+                runner.execute(tasks);
 
             }
         });

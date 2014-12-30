@@ -5,7 +5,7 @@ import java.util.Random;
 /**
  * Created by turlough on 30/12/14.
  */
-public class DataGenerator {
+public class DataGenerator implements IGenerator {
     private int mean = 0;
     private int sd = 0;
     private Random random;
@@ -16,7 +16,7 @@ public class DataGenerator {
         random = new Random();
     }
 
-    public double nextGaussian(){
+    public double nextValue(){
         return mean + ( random.nextGaussian() * sd);
     }
 }

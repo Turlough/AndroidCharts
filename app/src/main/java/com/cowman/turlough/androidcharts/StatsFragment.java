@@ -12,12 +12,11 @@ import android.view.View;
 import android.view.ViewGroup;
 
 
-public class StatsFragment extends Fragment {
+public class StatsFragment extends Fragment implements IPlotter{
 
 
     private OnFragmentInteractionListener mListener;
     StatsView chart;
-
 
 
     public static StatsFragment newInstance() {
@@ -36,8 +35,6 @@ public class StatsFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-
     }
 
     @Override
@@ -76,13 +73,19 @@ public class StatsFragment extends Fragment {
     }
 
     public void add(final double data){
+
+         chart.add(data);
+
+    }
+
+    @Override
+    public void refresh() {
         getActivity().runOnUiThread( new Runnable() {
             @Override
             public void run() {
-                chart.add(data);
+                chart.refresh();
             }
         });
-
     }
 
 }
