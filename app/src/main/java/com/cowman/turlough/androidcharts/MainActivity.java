@@ -6,6 +6,8 @@ import android.support.v7.app.ActionBarActivity;
 import android.view.View;
 import android.widget.Button;
 
+import java.util.Random;
+
 
 public class MainActivity extends ActionBarActivity implements StatsFragment.OnFragmentInteractionListener {
 
@@ -30,7 +32,10 @@ public class MainActivity extends ActionBarActivity implements StatsFragment.OnF
         btnStart.setOnClickListener( new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                int data =90 + (int)( Math.random() * 15);
+                Random r = new Random();
+                int sd = 37;
+
+                double data = sd * 8 + ( r.nextGaussian() * sd);
                 fragment.add(data);
             }
         });

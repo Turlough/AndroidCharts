@@ -1,20 +1,15 @@
 package com.cowman.turlough.androidcharts;
 
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.util.AttributeSet;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
-import java.util.List;
-
 public class StatsView extends SurfaceView {
 
     private SurfaceHolder surfaceHolder;
-    private Bars bars = new Bars();;
+    private Plotter plotter = new Plotter();;
 
     public StatsView(Context context) {
         super(context);
@@ -60,14 +55,14 @@ public class StatsView extends SurfaceView {
         });
     }
 
-    public void add(int data){
+    public void add(double data){
 
         Canvas canvas = surfaceHolder.lockCanvas(null);
-        bars.add(data, canvas);
+        plotter.add(data, canvas);
         surfaceHolder.unlockCanvasAndPost(canvas);
 
     }
     protected void update(Canvas canvas) {
-        bars.drawOn(canvas);
+        plotter.plotData(canvas);
     }
 }

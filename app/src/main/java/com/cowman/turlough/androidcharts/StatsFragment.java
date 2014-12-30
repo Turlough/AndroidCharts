@@ -75,7 +75,7 @@ public class StatsFragment extends Fragment {
         public void onFragmentInteraction(Uri uri);
     }
 
-    public void add(int data){
+    public void add(double data){
         chart.add(data);
     }
 
