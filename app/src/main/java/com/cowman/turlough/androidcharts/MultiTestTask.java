@@ -10,7 +10,7 @@ import android.widget.Toast;
  */
 public class MultiTestTask extends AsyncTask<TestTask, IPlotter, Void> {
 
-    DataGenerator generator = new DataGenerator(174, 33);
+    DataGenerator generator = new DataGenerator(174, 13);
     Activity parent;
 
     public MultiTestTask(Activity parent) {
@@ -44,6 +44,7 @@ public class MultiTestTask extends AsyncTask<TestTask, IPlotter, Void> {
             @Override
             public void run() {
                 plotter.refresh();
+                Thread.yield();
             }
         });
 

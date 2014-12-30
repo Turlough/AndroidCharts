@@ -161,7 +161,7 @@ public class Plotter{
         );
 
         //stats rectangles
-        statsPaint.setAlpha(30);
+        statsPaint.setAlpha(50);
 
         drawSdRectangle(canvas, centre, sd, 1);
         drawSdRectangle(canvas, centre, sd, 2);
@@ -174,7 +174,7 @@ public class Plotter{
                 leftOffset,//left
                 mean + sd * tolerance,//top
                 canvas.getWidth() - rightOffset,//right
-                mean - sd * 3,//bottom
+                mean - sd * tolerance,//bottom
                 statsPaint
         );
     }
