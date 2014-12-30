@@ -18,8 +18,9 @@ public class Bars {
     private int yScale = 50;
     int padding =5;
     Paint barPaint;
+    Paint linesPaint;
     int maxValue = 10;
-    int leftOffset = 50;
+    int leftOffset = 100;
     int bottomOffset = 50;
     int topOffset = 50;
     int rightOffset = 50;
@@ -33,7 +34,15 @@ public class Bars {
         barPaint = new Paint();
         barPaint.setAntiAlias(true);
         barPaint.setColor(Color.argb(100, 255, 255, 100));
-        barPaint.setStyle(Paint.Style.STROKE);
+        barPaint.setStyle(Paint.Style.FILL_AND_STROKE);
+        //barPaint.setStrokeWidth(5f);
+
+        linesPaint = new Paint();
+        linesPaint.setAntiAlias(true);
+        linesPaint.setColor(Color.argb(200, 100, 100, 200));
+        linesPaint.setStyle(Paint.Style.STROKE);
+        linesPaint.setStrokeWidth(1f);
+
 
     }
 
@@ -52,22 +61,61 @@ public class Bars {
     private void drawBar(int i,  Canvas c){
 
         int w = (c.getWidth() - leftOffset - rightOffset) / values.size();
+        int base = c.getHeight() - bottomOffset;
+        int top = base - (values.get(i) * yScale);
 
         c.drawRect(
                 leftOffset + (i * w + padding),//left
-                (values.get(i) * yScale) ,//top
+                top ,//top
                 (i + 1) * w ,//right
-                c.getHeight() - bottomOffset,//bottom
+                base,//bottom
                 barPaint
+        );
+
+        c.drawText(
+                Integer.toString(values.get(i)),
+                (float)(leftOffset + (i * w + padding)),
+                (float)(top - 10),
+                linesPaint
         );
     }
 
     public void add(int data, Canvas c){
+
         values.add(data);
-        maxValue = Math.max(data, maxValue);
+        maxValue = Math.max(data +1, maxValue);
         yScale = (c.getHeight() - topOffset - bottomOffset)/(maxValue);
 
         drawOn(c);
+        drawLines(c);
     }
+
+    public void drawLines(Canvas c){
+
+        int base = c.getHeight() - bottomOffset;
+        int step = Math.max(1, maxValue / 10 );
+
+        for (int i = 0; i <= maxValue; i += step) {
+
+            int top = base - (i * yScale);
+
+            c.drawText(
+                    Integer.toString(i),
+                    (float)(leftOffset - 50),
+                    (float)(top),
+                    linesPaint
+            );
+
+            c.drawLine(
+                    leftOffset, //startx
+                    top,//starty
+                    c.getWidth() - rightOffset, //stopx
+                    top, //stopy
+                    linesPaint
+            );
+        }
+    }
+
+
 
 }
