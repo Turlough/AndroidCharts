@@ -1,115 +1,73 @@
 package com.cowman.turlough.androidcharts;
 
-import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
-import android.graphics.Paint;
-import android.graphics.Rect;
+import android.util.AttributeSet;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
-import static android.graphics.BitmapFactory.*;
+import java.util.List;
 
-/**
- * Created by turlough on 14/12/14.
- */
-public class StatsView extends SurfaceView implements SurfaceHolder.Callback {
+public class StatsView extends SurfaceView {
 
-    private Bitmap bitmap ;
-    private MyThread thread;
-    private int x=20,y=20;
-    int width,height;
+    private SurfaceHolder surfaceHolder;
+    private Bars bars = new Bars();;
 
-
-    public StatsView(Context context, int w, int h) {
+    public StatsView(Context context) {
         super(context);
-
-        width=w;
-        height=h;
-        thread=new MyThread(getHolder(),this);
-        getHolder().addCallback(this);
-        setFocusable(true);
-    }
-
-    @Override
-    public void surfaceCreated(SurfaceHolder surfaceHolder) {
-
-        thread.startrun(true);
-        thread.start();
-    }
-
-    @Override
-    public void surfaceChanged(SurfaceHolder surfaceHolder, int i, int i2, int i3) {
+        init();
 
     }
 
-    @Override
-    public void onDraw(Canvas canvas) {
-        super.onDraw(canvas);
-
-        bitmap = decodeResource(getResources(), R.drawable.ic_launcher);
-        canvas.drawColor(Color.BLUE);//To make background
-        canvas.drawBitmap(bitmap,x-(bitmap.getWidth()/2),y-(bitmap.getHeight()/2),null);
-
-
-        Paint paintShape = new Paint();
-        paintShape.setColor(Color.BLACK);
-        paintShape.setStyle(Paint.Style.STROKE);
-
-        Rect myRectangle = new Rect();
-        myRectangle.set(0, 100, canvas.getWidth()/4, canvas.getHeight()/4);
-
-        canvas.drawRect(myRectangle, paintShape);
-
-
+    public StatsView(Context context,
+                         AttributeSet attrs) {
+        super(context, attrs);
+        init();
     }
 
-    @Override
-    public void surfaceDestroyed(SurfaceHolder surfaceHolder) {
-        thread.startrun(false);
-        thread.stop();
+    public StatsView(Context context,
+                         AttributeSet attrs, int defStyle) {
+        super(context, attrs, defStyle);
+        init();
     }
-    public class MyThread extends Thread {
 
-        private SurfaceHolder holder;
-        private StatsView view;
-        private boolean mrun = false;
+    private void init() {
+        surfaceHolder = getHolder();
+        surfaceHolder.addCallback(new SurfaceHolder.Callback() {
 
-        public MyThread(SurfaceHolder holder, StatsView view) {
-
-            this.holder = holder;
-            this.view = view;
-        }
-
-        public void startrun(boolean run) {
-
-            mrun = run;
-        }
-
-        @SuppressLint("WrongCall")
-        @Override
-        public void run() {
-
-            super.run();
-            Canvas canvas;
-            while (mrun) {
-                canvas = null;
-                try {
-                    canvas = holder.lockCanvas(null);
-                    synchronized (holder) {
-                        view.onDraw(canvas);
-                    }
-                } finally {
-                    if (canvas != null) {
-                        holder.unlockCanvasAndPost(canvas);
-                    }
-                }
+            @Override
+            public void surfaceCreated(SurfaceHolder holder) {
+                Canvas canvas = holder.lockCanvas(null);
+                update(canvas);
+                holder.unlockCanvasAndPost(canvas);
             }
-        }
 
+            @Override
+            public void surfaceChanged(SurfaceHolder holder,
+                                       int format, int width, int height) {
+                // TODO Auto-generated method stub
+
+            }
+
+            @Override
+            public void surfaceDestroyed(SurfaceHolder holder) {
+                // TODO Auto-generated method stub
+
+            }
+        });
     }
 
+    public void add(int data){
+
+        Canvas canvas = surfaceHolder.lockCanvas(null);
+        bars.add(data, canvas);
+        surfaceHolder.unlockCanvasAndPost(canvas);
+
+    }
+    protected void update(Canvas canvas) {
+        bars.drawOn(canvas);
+    }
 }
