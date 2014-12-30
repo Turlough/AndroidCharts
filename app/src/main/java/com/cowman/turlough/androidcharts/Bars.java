@@ -39,7 +39,7 @@ public class Bars {
 
         linesPaint = new Paint();
         linesPaint.setAntiAlias(true);
-        linesPaint.setColor(Color.argb(200, 100, 100, 200));
+        linesPaint.setColor(Color.argb(200, 200, 200, 0));
         linesPaint.setStyle(Paint.Style.STROKE);
         linesPaint.setStrokeWidth(1f);
 
@@ -60,23 +60,30 @@ public class Bars {
 
     private void drawBar(int i,  Canvas c){
 
-        int w = (c.getWidth() - leftOffset - rightOffset) / values.size();
+        int w = (c.getWidth() - leftOffset - rightOffset) / (values.size() +2);
         int base = c.getHeight() - bottomOffset;
         int top = base - (values.get(i) * yScale);
 
-        c.drawRect(
-                leftOffset + (i * w + padding),//left
-                top ,//top
-                (i + 1) * w ,//right
-                base,//bottom
+//        c.drawRect(
+//                leftOffset + (i * w + padding),//left
+//                top ,//top
+//                (i + 1) * w ,//right
+//                base,//bottom
+//                barPaint
+//        );
+
+        c.drawCircle(
+                leftOffset + (i * w ),
+                top,
+                5,
                 barPaint
         );
 
         c.drawText(
                 Integer.toString(values.get(i)),
-                (float)(leftOffset + (i * w + padding)),
+                (float)(leftOffset + (i * w )),
                 (float)(top - 10),
-                linesPaint
+                barPaint
         );
     }
 

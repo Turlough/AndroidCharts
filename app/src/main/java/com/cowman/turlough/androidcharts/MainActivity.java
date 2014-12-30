@@ -30,7 +30,7 @@ public class MainActivity extends ActionBarActivity implements StatsFragment.OnF
         btnStart.setOnClickListener( new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                int data =10 + (int)( Math.random() * 150);
+                int data =90 + (int)( Math.random() * 15);
                 fragment.add(data);
             }
         });
