@@ -75,8 +75,14 @@ public class StatsFragment extends Fragment {
         public void onFragmentInteraction(Uri uri);
     }
 
-    public void add(double data){
-        chart.add(data);
+    public void add(final double data){
+        getActivity().runOnUiThread( new Runnable() {
+            @Override
+            public void run() {
+                chart.add(data);
+            }
+        });
+
     }
 
 }

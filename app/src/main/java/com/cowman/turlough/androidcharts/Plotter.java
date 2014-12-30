@@ -158,7 +158,7 @@ public class Plotter {
                 statsPaint
         );
 
-        statsPaint.setAlpha(50);
+        statsPaint.setAlpha(30);
 
         c.drawRect(
                 leftOffset,//left

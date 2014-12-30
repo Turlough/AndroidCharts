@@ -13,6 +13,7 @@ public class MainActivity extends ActionBarActivity implements StatsFragment.OnF
 
     StatsFragment fragment;
     Button btnStart;
+    DataGenerator generator = new DataGenerator(200, 30);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,11 +33,16 @@ public class MainActivity extends ActionBarActivity implements StatsFragment.OnF
         btnStart.setOnClickListener( new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Random r = new Random();
-                int sd = 37;
+                for (int i = 0; i < 300; i++) {
+                    try {
+                        Thread.sleep(50);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                    double data = generator.nextGaussian();
+                    fragment.add(data);
+                }
 
-                double data = sd * 8 + ( r.nextGaussian() * sd);
-                fragment.add(data);
             }
         });
 

@@ -55,14 +55,13 @@ public class StatsView extends SurfaceView {
         });
     }
 
-    public void add(double data){
-
+    public synchronized void add(double data){
         Canvas canvas = surfaceHolder.lockCanvas(null);
         plotter.add(data, canvas);
         surfaceHolder.unlockCanvasAndPost(canvas);
 
     }
-    protected void update(Canvas canvas) {
+    protected synchronized void update(Canvas canvas) {
         plotter.plotData(canvas);
     }
 }
